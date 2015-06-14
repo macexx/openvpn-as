@@ -18,13 +18,13 @@ docker pull mace/openvpn-as
 
 **Run container**
 
-Docker, 1.2 and after.
+After version 1.2 of Docker.
 ```
-docker run -d --net="host" --cap-add=NET_ADMIN --device /dev/net/tun --name=<container name> -v <path for openvpn config files files>:/usr/local/openvpn_as -v /etc/localtime:/etc/localtime:ro -e ADMIN_PASS=<web ui password> -e VPN_USER1=<vpn username> -e VPN_PASS1=<vpn password> -e VPN_USER2=<vpn username> -e VPN_PASS2=<vpn password> macexx/openvpn-as
+docker run -d --net="host" --cap-add=NET_ADMIN --device /dev/net/tun --name=<container name> -v <path for openvpn config files files>:/usr/local/openvpn_as -v /etc/localtime:/etc/localtime:ro -e ADMIN_PASS=<web ui password> -e VPN_USER1=<vpn username> -e VPN_PASS1=<vpn password> -e VPN_USER2=<vpn username> -e VPN_PASS2=<vpn password> mace/openvpn-as
 ```
-Docker, pre 1.2. 
+Before version 1.2 of Docker. 
 ```
-docker run -d --net="host" --privileged --name=<container name> -v <path for openvpn config files files>:/usr/local/openvpn_as -v /etc/localtime:/etc/localtime:ro -e ADMIN_PASS=<web ui password> -e VPN_USER1=<vpn username> -e VPN_PASS1=<vpn password> -e VPN_USER2=<vpn username> -e VPN_PASS2=<vpn password> macexx/openvpn-as
+docker run -d --net="host" --privileged --name=<container name> -v <path for openvpn config files files>:/usr/local/openvpn_as -v /etc/localtime:/etc/localtime:ro -e ADMIN_PASS=<web ui password> -e VPN_USER1=<vpn username> -e VPN_PASS1=<vpn password> -e VPN_USER2=<vpn username> -e VPN_PASS2=<vpn password> mace/openvpn-as
 ```
 Please replace all user variables in the above command defined by <> with the correct values.
 
@@ -46,11 +46,11 @@ docker run -d --net="host" --cap-add=NET_ADMIN --device /dev/net/tun --name=open
 **Additional notes**
 
 
-* Dont forget to forward/open ports to/on you docker host in your router/firewall, the ports can be changed in the webui.
+* Dont forget to forward/open ports to/on you docker host or in your router/firewall, the ports can be changed in the webui.
 ```
 1194/udp 443/tcp  (943/tcp for webui if needed)
 ```
 * Check the manual from the link on the top for how to setup the server.
 * Vpn users1,2 needs to be added in the webui under "User Permissions" matching the exact name from the run command.
-* This Docker uses host network to be able to use resources from the local LAN.
+* This Docker uses host network to be able to reach resources from the local LAN.
 
