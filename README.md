@@ -40,12 +40,13 @@ Username for the webui is "openvpn" and the admin-password from the run command.
 **Example**
 
 ```
-docker run -d --net="host" --cap-add=NET_ADMIN --device /dev/net/tun --name=openvpnas -v /mylocal/directory/fordata:/usr/local/openvpn_as -v /etc/localtime:/etc/localtime:ro -e ADMIN_PASS=mywebuiadminpass -e VPN_USER1=myuser1 -e VPN_PASS1=mypassword1 -e VPN_USER2=myuser2 -e VPN_PASS2=mypassword2 macexx/openvpn-as
+docker run -d --net="host" --cap-add=NET_ADMIN --device /dev/net/tun --name=openvpnas -v /mylocal/directory/fordata:/usr/local/openvpn_as -v /etc/localtime:/etc/localtime:ro -e ADMIN_PASS=mywebuiadminpass -e VPN_USER1=myuser1 -e VPN_PASS1=mypassword1 -e VPN_USER2=myuser2 -e VPN_PASS2=mypassword2 mace/openvpn-as
 ```
 
 **Additional notes**
 
 
+* The Owner of the config directory needs to have UUID 1000
 * Dont forget to forward/open ports to/on you docker host or in your router/firewall, the ports can be changed in the webui.
 ```
 1194/udp 443/tcp  (943/tcp for webui if needed)
