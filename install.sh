@@ -10,6 +10,9 @@ usermod -g 100 nobody
 usermod -d /home nobody
 chown -R nobody:users /home
 
+#Add user for openvpn server to get uuid 1000
+useradd -s /sbin/nologin openvpn_as
+
 # Disable SSH
 rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
 
