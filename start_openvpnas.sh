@@ -25,7 +25,7 @@ rsync -a --ignore-existing /tmp/openvpn_as /usr/local
 rm -r /tmp/openvpn_as
 
 # Make sure permissions for unRAID is ok
-chown -R openvpn:users /usr/local/openvpn_as
+chown -R openvpn_as:users /usr/local/openvpn_as
 chmod 755 -R /usr/local/openvpn_as
 
 

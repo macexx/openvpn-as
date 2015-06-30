@@ -44,7 +44,7 @@ curl -O http://swupdate.openvpn.org/as/openvpn-as-2.0.17-Ubuntu14.amd_64.deb
 dpkg -i openvpn-as-2.0.17-Ubuntu14.amd_64.deb
 
 # Copy Installed files to temp directory to later be copied to host directory in start script
-chown -R openvpn:users /usr/local/openvpn_as
+chown -R openvpn_as:users /usr/local/openvpn_as
 chmod 755 -R /usr/local/openvpn_as
 rsync -a /usr/local/openvpn_as /tmp
 
