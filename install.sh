@@ -26,8 +26,7 @@ echo 'deb http://archive.ubuntu.com/ubuntu trusty-updates main universe restrict
 
 # Install Dependencies
 apt-get update -qq
-apt-get upgrade -qy
-apt-get install -qy iptables
+apt-get install -qy iptables curl
 
 #########################################
 ##  FILES, SERVICES AND CONFIGURATION  ##
