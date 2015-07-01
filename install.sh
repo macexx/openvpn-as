@@ -66,7 +66,7 @@ touch /config/logs/openvpn.log
 
 # Checking if openvpn configuration exists
 if [ -d "/config/config/etc" ]; then
-  echo "Config exists, recreating old configuration!"
+  echo "Config exists, importing previous configuration!"
   rm -r /usr/local/openvpn_as/etc
   ln -sf /config/config/etc /usr/local/openvpn_as/etc
 else

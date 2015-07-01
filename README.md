@@ -41,7 +41,7 @@ docker run -d --net="host" --cap-add=NET_ADMIN --device /dev/net/tun --name=open
 **Additional notes**
 
 
-* The Owner of the config directory needs sufficent permissions (UUID 99 / GID 100)
+* The owner of the config directory needs sufficent permissions (UUID 99 / GID 100).
 * Dont forget to forward/open ports to/on you docker host or in your router/firewall, the ports can be changed in the webui.
 ```
 1194/udp 443/tcp  (943/tcp for webui if needed)
