@@ -7,6 +7,7 @@ MAINTAINER Mace Capri <macecapri@gmail.com>
 ##           ENVIRONMENTAL CONFIG            ##
 ###############################################
 # Set correct environment variables
+ENV DEBIAN_FRONTEND noninteractive
 ENV HOME="/root" LC_ALL="C.UTF-8" LANG="en_US.UTF-8" LANGUAGE="en_US.UTF-8"
 
 # Use baseimage-docker's init system
@@ -26,13 +27,4 @@ RUN chmod +x /tmp/install.sh && sleep 1 && /tmp/install.sh && rm /tmp/install.sh
 #expose 443/tcp
 #expose 943/tcp
 #expose 1194/udp
-VOLUME ["/usr/local/openvpn_as"]
-
-
-###############################################
-## ADD USERS, COPY DATA TO HOST, RUN OPENVPN ##
-###############################################
-
-RUN mkdir -p /etc/my_init.d
-ADD start_openvpnas.sh /etc/my_init.d/start_openvpnas.sh
-RUN chmod +x /etc/my_init.d/start_openvpnas.sh
+VOLUME /config

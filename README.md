@@ -18,13 +18,8 @@ docker pull mace/openvpn-as
 
 **Run container**
 
-After version 1.2 of Docker.
 ```
-docker run -d --net="host" --cap-add=NET_ADMIN --device /dev/net/tun --name=<container name> -v <path for openvpn config files files>:/usr/local/openvpn_as -v /etc/localtime:/etc/localtime:ro -e ADMIN_PASS=<web ui password> -e VPN_USER1=<vpn username> -e VPN_PASS1=<vpn password> -e VPN_USER2=<vpn username> -e VPN_PASS2=<vpn password> mace/openvpn-as
-```
-Before version 1.2 of Docker. 
-```
-docker run -d --net="host" --privileged --name=<container name> -v <path for openvpn config files files>:/usr/local/openvpn_as -v /etc/localtime:/etc/localtime:ro -e ADMIN_PASS=<web ui password> -e VPN_USER1=<vpn username> -e VPN_PASS1=<vpn password> -e VPN_USER2=<vpn username> -e VPN_PASS2=<vpn password> mace/openvpn-as
+docker run -d --net="host" --privileged --name=<container name> -v <path for openvpn config files files>:/config -v /etc/localtime:/etc/localtime:ro -e ADMIN_PASS=<web ui password> -e VPN_USER1=<vpn username> -e VPN_PASS1=<vpn password> -e VPN_USER2=<vpn username> -e VPN_PASS2=<vpn password> mace/openvpn-as
 ```
 Please replace all user variables in the above command defined by <> with the correct values.
 
@@ -40,13 +35,13 @@ Username for the webui is "openvpn" and the admin-password from the run command.
 **Example**
 
 ```
-docker run -d --net="host" --cap-add=NET_ADMIN --device /dev/net/tun --name=openvpnas -v /mylocal/directory/fordata:/usr/local/openvpn_as -v /etc/localtime:/etc/localtime:ro -e ADMIN_PASS=mywebuiadminpass -e VPN_USER1=myuser1 -e VPN_PASS1=mypassword1 -e VPN_USER2=myuser2 -e VPN_PASS2=mypassword2 mace/openvpn-as
+docker run -d --net="host" --cap-add=NET_ADMIN --device /dev/net/tun --name=openvpnas -v /mylocal/directory/fordata:/config -v /etc/localtime:/etc/localtime:ro -e ADMIN_PASS=mywebuiadminpass -e VPN_USER1=myuser1 -e VPN_PASS1=mypassword1 -e VPN_USER2=myuser2 -e VPN_PASS2=mypassword2 mace/openvpn-as
 ```
 
 **Additional notes**
 
 
-* The Owner of the config directory needs to have UUID 1000
+* The Owner of the config directory needs sufficent permissions (UUID 99 / GID 100)
 * Dont forget to forward/open ports to/on you docker host or in your router/firewall, the ports can be changed in the webui.
 ```
 1194/udp 443/tcp  (943/tcp for webui if needed)
