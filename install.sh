@@ -88,8 +88,8 @@ chmod -R +x /etc/service/ /etc/my_init.d/
 #########################################
 
 # Install OpenVPN-AS
-curl -O http://swupdate.openvpn.org/as/openvpn-as-2.0.17-Ubuntu14.amd_64.deb
-dpkg -i openvpn-as-2.0.17-Ubuntu14.amd_64.deb
+curl -O http://swupdate.openvpn.org/as/openvpn-as-2.0.20-Ubuntu14.amd_64.deb
+dpkg -i openvpn-as-2.0.20-Ubuntu14.amd_64.deb
 
 
 
@@ -100,4 +100,4 @@ dpkg -i openvpn-as-2.0.17-Ubuntu14.amd_64.deb
 # Clean APT install files
 apt-get clean -y
 rm -rf /var/lib/apt/lists/* /var/cache/* /var/tmp/*
-rm openvpn-as-2.0.17-Ubuntu14.amd_64.deb
+rm openvpn-as-2.0.20-Ubuntu14.amd_64.deb
