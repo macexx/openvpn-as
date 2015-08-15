@@ -24,7 +24,7 @@ RUN chmod +x /tmp/install.sh && sleep 1 && /tmp/install.sh && rm /tmp/install.sh
 ##             PORTS AND VOLUMES             ##
 ###############################################
 
-#expose 443/tcp
+#expose 9443/tcp
 #expose 943/tcp
 #expose 1194/udp
 VOLUME /config

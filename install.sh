@@ -36,51 +36,95 @@ apt-get install -qy iptables curl
 mkdir -p /config
 
 
-# OPENVPN_AS
-mkdir -p /etc/service/openvpn
-cat <<'EOT' > /etc/service/openvpn/run
-#!/bin/bash
-chown -R nobody:users /config
-/usr/local/openvpn_as/scripts/openvpnas --nodaemon --logfile=/config/logs/openvpn.log
-EOT
-
 
 # Config
 cat <<'EOT' > /etc/my_init.d/00_config.sh
 #!/bin/bash
 
-# Set password for Web admin login
-echo openvpn:$ADMIN_PASS|chpasswd
-
-# Add vpn users
-id -u $VPN_USER1 > /dev/null 2>&1 || useradd -s /sbin/nologin $VPN_USER1
-id -u $VPN_USER2 > /dev/null 2>&1 || useradd -s /sbin/nologin $VPN_USER2
-
-# Set passwords for vpn users
-id -u $VPN_USER1 > /dev/null 2>&1 && echo $VPN_USER1:$VPN_PASS1|chpasswd
-id -u $VPN_USER2 > /dev/null 2>&1 && echo $VPN_USER2:$VPN_PASS2|chpasswd
-
 # Set log directory
+
 mkdir -p /config/logs
-touch /config/logs/openvpn.log
+touch /config/logs/openvpnas.log
 
 # Checking if openvpn configuration exists
+
 if [ -d "/config/config/etc" ]; then
   echo "Config exists, importing previous configuration!"
   rm -r /usr/local/openvpn_as/etc
+  rm /var/log/openvpnas.log
   ln -sf /config/config/etc /usr/local/openvpn_as/etc
+  ln -sf /config/logs/openvpnas.log /var/log/openvpnas.log
 else
   echo "Copying configuration from install directory to host!"
   mkdir -p /config/config
   mv /usr/local/openvpn_as/etc /config/config/etc
+  rm /var/log/openvpnas.log
   ln -sf /config/config/etc /usr/local/openvpn_as/etc
+  ln -sf /config/logs/openvpnas.log /var/log/openvpnas.log
+fi
+
+# Setting default values for config files
+
+check=$( grep -ic "nobody" /config/config/etc/as.conf )
+
+if [ $check -gt 1 ]; then
+  echo "Checking configuration, Defaults are already set!"
+else
+  echo "Checking configuration, Setting Openvpn-AS defaults!"
+  sed -i 's/^boot_pam_service=openvpnas.*/boot_pam_service=nobody/' /config/config/etc/as.conf
+  sed -i 's/^boot_pam_users.0=openvpn.*/#boot_pam_users.0=openvpn/' /config/config/etc/as.conf
+  sed -i 's/^system_users_local.1=openvpn_as.*/system_users_local.1=nobody/' /config/config/etc/as.conf
+  sed -i 's/^cs.user=openvpn_as.*/cs.user=nobody/' /config/config/etc/as.conf
+  sed -i 's/^cs.group=openvpn_as.*/cs.group=users/' /config/config/etc/as.conf
+  sed -i 's/^vpn.server.user=openvpn_as.*/vpn.server.user=nobody/' /config/config/etc/as.conf
+  sed -i 's/^vpn.server.group=openvpn_as.*/vpn.server.group=users/' /config/config/etc/as.conf
+  /usr/local/openvpn_as/scripts/confdba -mk "auth.module.type" -v "local"
+  /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.listen.port" -v "9443"
+  /usr/local/openvpn_as/scripts/confdba -mk "vpn.server.daemon.tcp.port" -v "9443"
+fi
+
+# Setting listening network interface, default eth0 if variable isent set
+
+if [ -z "$INTERFACE" ]; then
+  echo "Interface variable is not set, Defaulting to interface "eth0"!"
+  /usr/local/openvpn_as/scripts/confdba -mk "admin_ui.https.ip_address" -v "eth0"
+  /usr/local/openvpn_as/scripts/confdba -mk "cs.https.ip_address" -v "eth0"
+  /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.listen.ip_address" -v "eth0"
+  /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.server.ip_address" -v "eth0"
+else
+  echo "Setting listening Interface to Interface, $INTERFACE!!"
+  /usr/local/openvpn_as/scripts/confdba -mk "admin_ui.https.ip_address" -v "$INTERFACE"
+  /usr/local/openvpn_as/scripts/confdba -mk "cs.https.ip_address" -v "$INTERFACE"
+  /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.listen.ip_address" -v "$INTERFACE"
+  /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.server.ip_address" -v "$INTERFACE"
 fi
 
 chown -R nobody:users /config
+chmod 777 /config/logs/openvpnas.log
 EOT
 
+# Start openvpn and check admin user
+cat <<'EOT' > /etc/my_init.d/01_start.sh
+#!/bin/bash
 
-chmod -R +x /etc/service/ /etc/my_init.d/
+# Checking if default admin user is set
+user=$( /usr/local/openvpn_as/scripts/confdba -us|grep -ic "admin" )
+
+if [ $user -eq 1 ]; then
+  echo "Admin username and password has already been set! Starting Openvpn-AS."
+  /etc/init.d/openvpnas start
+else
+  /etc/init.d/openvpnas start
+  echo "Setting Admin default username and password: admin/openvpn"
+  sleep 2
+  /usr/local/openvpn_as/scripts/sacli -u admin -k prop_superuser -v true UserPropPut
+  /usr/local/openvpn_as/scripts/sacli -u admin --new_pass openvpn SetLocalPassword
+  /usr/local/openvpn_as/scripts/sacli -u openvpn UserPropDelAll
+  /etc/init.d/openvpnas restart
+fi
+EOT
+
+chmod -R +x /etc/my_init.d/
 
 
 #########################################
