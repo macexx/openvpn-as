@@ -66,11 +66,12 @@ fi
 # Setting default values for config files
 
 check=$( grep -ic "nobody" /config/config/etc/as.conf )
+check2=$( grep -ic "/tmp/sock" /config/config/etc/as.conf )
 
-if [ $check -gt 1 ]; then
+if [[ $check -gt 1 && $check2 -gt 1 ]]; then
   echo "Checking configuration, Defaults are already set!"
 else
-  echo "Checking configuration, Setting Openvpn-AS defaults!"
+  echo "Checking configuration, Setting Openvpn-AS defaults or update is beeing made!"
   sed -i 's/^boot_pam_service=openvpnas.*/boot_pam_service=nobody/' /config/config/etc/as.conf
   sed -i 's/^boot_pam_users.0=openvpn.*/#boot_pam_users.0=openvpn/' /config/config/etc/as.conf
   sed -i 's/^system_users_local.1=openvpn_as.*/system_users_local.1=nobody/' /config/config/etc/as.conf
@@ -78,6 +79,8 @@ else
   sed -i 's/^cs.group=openvpn_as.*/cs.group=users/' /config/config/etc/as.conf
   sed -i 's/^vpn.server.user=openvpn_as.*/vpn.server.user=nobody/' /config/config/etc/as.conf
   sed -i 's/^vpn.server.group=openvpn_as.*/vpn.server.group=users/' /config/config/etc/as.conf
+  sed -i 's|^general.sock_dir=~/sock.*|general.sock_dir=/tmp/sock|' /config/config/etc/as.conf
+  sed -i 's|^sa.sock=~/sock/sagent.*|sa.sock=/tmp/sock/sagent|' /config/config/etc/as.conf
   /usr/local/openvpn_as/scripts/confdba -mk "auth.module.type" -v "local"
   /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.listen.port" -v "9443"
   /usr/local/openvpn_as/scripts/confdba -mk "vpn.server.daemon.tcp.port" -v "9443"
@@ -99,6 +102,14 @@ else
   /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.server.ip_address" -v "$INTERFACE"
 fi
 
+# Setting up socks directory for openvpn-as(prevents host permissions to "bug")
+if [ ! -d "/tmp/sock" ]; then
+mkdir -p /tmp/sock
+chown nobody:users /tmp/sock
+chmod 777 /tmp/sock
+fi
+
+# Setting permissions so that host can edit config
 chown -R nobody:users /config
 chmod 777 /config/logs/openvpnas.log
 EOT

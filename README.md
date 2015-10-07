@@ -55,6 +55,7 @@ docker run -d --net="host"  --privileged --name=openvpnas -v /mylocal/directory/
 
 **Change notes**
 
+* Fix error that some host paths/permissions prevents openvpn to run
 * Admin username changed, "admin" and password "openvpn".
 * Default deamon tcp port changed from 443 to 9443.
 * All username and passvord variables was removed, now uses openvpn-as´s internal database.
