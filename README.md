@@ -63,10 +63,27 @@ docker run -d --privileged --net=none --name=openvpnas -v /mylocal/directory/for
 
 **Change notes**
 
-* Ass variable for pipework, "PIPEWORK".
-* Fix error that some host paths/permissions prevents openvpn to run
-* Admin username changed, "admin" and password "openvpn".
-* Default deamon tcp port changed from 443 to 9443.
-* All username and passvord variables was removed, now uses openvpn-as´s internal database.
-* "INTERFACE" variable added so that webui is reachable if eth0 isent linked to docker.(Defaults to eth0 if variable isent set in the run command)
-* Now run as nobody:users
+Change notes
+
+* 2015.07.01
+
+Complete rewrite - Last code diden´t survive upgrades of openvpn and sometimes got corrupted on docker rebuilds. New code to better fit unRAID permissions and Phusion template. (Need to set a new config directory/ or clear old one- if upgrading).
+* 2015.08.11
+
+Update Phusion base-image, Update to Openvpn-AS 2.0.20.
+* 2015.08.15
+
+Admin username changed, "admin" and password "openvpn".
+Default tcp port changed from 443 to 9443
+All username/passvord variables removed, now uses internal database.
+"INTERFACE" variable added, fixes bond0 issues.
+openvpn is now running as nobody:users.
+* 2015.10.7
+
+Fix error that /mnt/user/(appdata) couldent be used. (symlinked and samba shares for non unRAID systems)
+* 2015.10.17
+
+Update to openvpn-as openvpn-as-2.0.21.
+* 2015.11.12
+Add variable for pipework, "PIPEWORK".
+
