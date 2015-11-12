@@ -25,6 +25,7 @@ RUN chmod +x /tmp/install.sh && sleep 1 && /tmp/install.sh && rm /tmp/install.sh
 ###############################################
 
 #expose 9443/tcp
+#expose 443/tcp
 #expose 943/tcp
 #expose 1194/udp
 VOLUME /config

@@ -86,20 +86,28 @@ else
   /usr/local/openvpn_as/scripts/confdba -mk "vpn.server.daemon.tcp.port" -v "9443"
 fi
 
-# Setting listening network interface, default eth0 if variable isent set
+# Setting listening network interface, defaults to eth0 if INTERFACE or PIPEWORK variable isent set.
 
-if [ -z "$INTERFACE" ]; then
-  echo "Interface variable is not set, Defaulting to interface "eth0"!"
-  /usr/local/openvpn_as/scripts/confdba -mk "admin_ui.https.ip_address" -v "eth0"
-  /usr/local/openvpn_as/scripts/confdba -mk "cs.https.ip_address" -v "eth0"
-  /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.listen.ip_address" -v "eth0"
-  /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.server.ip_address" -v "eth0"
-else
+if [ -v "INTERFACE" ]; then
   echo "Setting listening Interface to Interface, $INTERFACE!!"
   /usr/local/openvpn_as/scripts/confdba -mk "admin_ui.https.ip_address" -v "$INTERFACE"
   /usr/local/openvpn_as/scripts/confdba -mk "cs.https.ip_address" -v "$INTERFACE"
   /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.listen.ip_address" -v "$INTERFACE"
   /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.server.ip_address" -v "$INTERFACE"
+elif [ -v "PIPEWORK" ]; then
+  echo "Pipework is enabled, Setting interface to "eth1" and changing https port to default "443"!"
+  /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.listen.port" -v "443"
+  /usr/local/openvpn_as/scripts/confdba -mk "vpn.server.daemon.tcp.port" -v "443"
+  /usr/local/openvpn_as/scripts/confdba -mk "admin_ui.https.ip_address" -v "eth1"
+  /usr/local/openvpn_as/scripts/confdba -mk "cs.https.ip_address" -v "eth1"
+  /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.listen.ip_address" -v "eth1"
+  /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.server.ip_address" -v "eth1"
+else
+  echo "Interface variable is not set, Defaulting to interface "eth0"!"
+  /usr/local/openvpn_as/scripts/confdba -mk "admin_ui.https.ip_address" -v "eth0"
+  /usr/local/openvpn_as/scripts/confdba -mk "cs.https.ip_address" -v "eth0"
+  /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.listen.ip_address" -v "eth0"
+  /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.server.ip_address" -v "eth0"
 fi
 
 # Setting up socks directory for openvpn-as(prevents host permissions to "bug")
@@ -111,7 +119,7 @@ fi
 
 # Setting permissions so that host can edit config
 chown -R nobody:users /config
-chmod 777 /config/logs/openvpnas.log
+chmod 777 /config/logs/openvpnas.log	
 EOT
 
 # Start openvpn and check admin user
@@ -120,6 +128,11 @@ cat <<'EOT' > /etc/my_init.d/01_start.sh
 
 # Checking if default admin user is set
 user=$( /usr/local/openvpn_as/scripts/confdba -us|grep -ic "admin" )
+
+if [ -v "PIPEWORK" ]; then
+  echo "Pipework is enabled waiting for network to come up..."
+  pipework --wait
+fi
 
 if [ $user -eq 1 ]; then
   echo "Admin username and password has already been set! Starting Openvpn-AS."
@@ -141,6 +154,10 @@ chmod -R +x /etc/my_init.d/
 #########################################
 ##             INTALLATION             ##
 #########################################
+
+# Download pipework
+bash -c "curl https://raw.githubusercontent.com/jpetazzo/pipework/master/pipework > /usr/local/bin/pipework"
+chmod +x /usr/local/bin/pipework
 
 # Install OpenVPN-AS
 curl -O http://swupdate.openvpn.org/as/openvpn-as-2.0.21-Ubuntu14.amd_64.deb

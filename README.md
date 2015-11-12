@@ -42,6 +42,12 @@ Username for the webui is "admin" and the password is "openvpn".
 docker run -d --net="host"  --privileged --name=openvpnas -v /mylocal/directory/fordata:/config -v /etc/localtime:/etc/localtime:ro -e INTERFACE=br0 mace/openvpn-as
 ```
 
+For use with "pipework" --  https://hub.docker.com/r/dreamcat4/pipework/
+```
+docker run -d --privileged --net=none --name=openvpnas -v /mylocal/directory/fordata:/config -v /etc/localtime:/etc/localtime:ro -e  PIPEWORK=yes -e 'pipework_cmd=br0 @openvpnas@ 192.168.1.10/24@192.168.1.1' mace/openvpn-as
+```
+
+
 **Additional notes**
 
 
@@ -51,10 +57,13 @@ docker run -d --net="host"  --privileged --name=openvpnas -v /mylocal/directory/
 1194/udp 9443/tcp  (943/tcp for webui if needed)
 ```
 * Check the manual from the link on the top for how to setup the server.
+* If "PIPEWORK" varable is set to "yes" dont use INTERFACE variable.
+* When "PIPEWORK" varable is set dont forget to don´t use any network.
 
 
 **Change notes**
 
+* Ass variable for pipework, "PIPEWORK".
 * Fix error that some host paths/permissions prevents openvpn to run
 * Admin username changed, "admin" and password "openvpn".
 * Default deamon tcp port changed from 443 to 9443.
