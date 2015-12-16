@@ -8,7 +8,7 @@ OpenVPN - https://openvpn.net/index.php/access-server/overview.html
 
 
 
-Running on the latest Phusion release (ubuntu 14.04), with OpenVPN AS 2.0.20.
+Running on the latest Phusion release (ubuntu 14.04), with OpenVPN AS 2.0.21.
 
 **Pull image**
 
@@ -85,5 +85,8 @@ Fix error that /mnt/user/(appdata) couldent be used. (symlinked and samba shares
 
 Update to openvpn-as openvpn-as-2.0.21.
 * 2015.11.12
-Add variable for pipework, "PIPEWORK".
 
+Add variable for pipework, "PIPEWORK".
+* 2015.08.11
+
+Update Phusion base-image. 
