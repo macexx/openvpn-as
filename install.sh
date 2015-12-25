@@ -134,6 +134,10 @@ if [ -v "PIPEWORK" ]; then
   pipework --wait
 fi
 
+echo "Upgrading local packages(Security) - This might take awhile(first run takes some extra time)"
+apt-get update -qq && apt-get upgrade -yqq
+echo "Upgrade Done...."
+
 if [ $user -eq 1 ]; then
   echo "Admin username and password has already been set! Starting Openvpn-AS."
   /etc/init.d/openvpnas start
