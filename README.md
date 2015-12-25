@@ -90,3 +90,29 @@ Add variable for pipework, "PIPEWORK".
 * 2015.08.11
 
 Update Phusion base-image. 
+
+[font size=4]2015.08.15[/font]
+    - Admin username changed, "admin" and password "openvpn".
+    - Default tcp port changed from 443 to 9443.
+    - All username/passvord variables removed, now uses internal database.
+    - "INTERFACE" variable added, fixes bond0 issues.
+    - openvpn is now running as nobody:users.
+
+    [font size=4]2015.10.7[/font]
+    - Fix error that /mnt/user/(appdata) couldent be used.
+
+    [font size=4]2015.10.17[/font]
+    - Update to openvpn-as openvpn-as-2.0.21
+
+    [font size=4]2015.11.12[/font]
+    - Added support for pipework (defaults to eth1 and port 443 instead of 9443)
+
+    [font size=4]2015.12.16[/font]
+    - Upgrade Phusion base-image.
+
+    [font size=4]2015.12.19[/font]
+    - Revert to previous Phusion base-image.(New image is bugged)
+
+    [font size=4]2015.12.24[/font]
+    - Phusion base-image.(Upgrade sys-log)
+    - Add apt-get upgrade for security updates should have been enabled along time ago
