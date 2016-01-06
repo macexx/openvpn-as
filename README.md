@@ -116,3 +116,6 @@ Update Phusion base-image.
     [font size=4]2015.12.24[/font]
     - Phusion base-image.(Upgrade sys-log)
     - Add apt-get upgrade for security updates should have been enabled along time ago
+
+    [font size=4]2016.01.06[/font]
+    - Upgrade to Openvpn-as-2.0.24 
