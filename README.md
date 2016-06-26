@@ -126,3 +126,5 @@ Update Phusion base-image.
     [font size=4]2016.05.22[/font]
     - Upgrade to Openvpn-as-2.1.0
 
+    [font size=4]2016.06.27[/font]
+    - Upgrade to Openvpn-as-2.1.1
