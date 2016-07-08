@@ -8,7 +8,7 @@ OpenVPN - https://openvpn.net/index.php/access-server/overview.html
 
 
 
-Running on the latest Phusion release (ubuntu 14.04), with OpenVPN AS 2.1.0.
+Running on the latest Phusion release (ubuntu 14.04), with OpenVPN AS 2.1.2.
 
 **Pull image**
 
@@ -128,3 +128,6 @@ Update Phusion base-image.
 
     [font size=4]2016.06.27[/font]
     - Upgrade to Openvpn-as-2.1.1
+
+    [font size=4]2016.07.8[/font]
+    - Upgrade to Openvpn-as-2.1.2
