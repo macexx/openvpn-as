@@ -19,11 +19,6 @@ rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
 ##    REPOSITORIES AND DEPENDENCIES    ##
 #########################################
 
-# Repositories
-echo 'deb http://archive.ubuntu.com/ubuntu trusty main universe restricted' > /etc/apt/sources.list
-echo 'deb http://archive.ubuntu.com/ubuntu trusty-updates main universe restricted' >> /etc/apt/sources.list
-
-
 # Install Dependencies
 apt-get update -qq
 apt-get install -qy iptables curl
@@ -94,14 +89,6 @@ if [ -v "INTERFACE" ]; then
   /usr/local/openvpn_as/scripts/confdba -mk "cs.https.ip_address" -v "$INTERFACE"
   /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.listen.ip_address" -v "$INTERFACE"
   /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.server.ip_address" -v "$INTERFACE"
-elif [ -v "PIPEWORK" ]; then
-  echo "Pipework is enabled, Setting interface to "eth1" and changing https port to default "443"!"
-  /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.listen.port" -v "443"
-  /usr/local/openvpn_as/scripts/confdba -mk "vpn.server.daemon.tcp.port" -v "443"
-  /usr/local/openvpn_as/scripts/confdba -mk "admin_ui.https.ip_address" -v "eth1"
-  /usr/local/openvpn_as/scripts/confdba -mk "cs.https.ip_address" -v "eth1"
-  /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.listen.ip_address" -v "eth1"
-  /usr/local/openvpn_as/scripts/confdba -mk "vpn.daemon.0.server.ip_address" -v "eth1"
 else
   echo "Interface variable is not set, Defaulting to interface "eth0"!"
   /usr/local/openvpn_as/scripts/confdba -mk "admin_ui.https.ip_address" -v "eth0"
@@ -119,7 +106,7 @@ fi
 
 # Setting permissions so that host can edit config
 chown -R nobody:users /config
-chmod 777 /config/logs/openvpnas.log	
+chmod 777 /config/logs/openvpnas.log
 EOT
 
 # Start openvpn and check admin user
@@ -129,26 +116,24 @@ cat <<'EOT' > /etc/my_init.d/01_start.sh
 # Checking if default admin user is set
 user=$( /usr/local/openvpn_as/scripts/confdba -us|grep -ic "admin" )
 
-if [ -v "PIPEWORK" ]; then
-  echo "Pipework is enabled waiting for network to come up..."
-  pipework --wait
-fi
-
 echo "Upgrading local packages(Security) - This might take awhile(first run takes some extra time)"
 apt-get update -qq && apt-get upgrade -yqq
 echo "Upgrade Done...."
 
 if [ $user -eq 1 ]; then
   echo "Admin username and password has already been set! Starting Openvpn-AS."
-  /etc/init.d/openvpnas start
+  pkill python && /bin/rm -f /tmp/sock/sagent /tmp/sock/sagent.localroot /tmp/sock/sagent.api /var/run/openvpnas.pid
+  /usr/local/openvpn_as/scripts/openvpnas --logfile=/var/log/openvpnas.log --pidfile=/var/run/openvpnas.pid
 else
-  /etc/init.d/openvpnas start
+  pkill python && /bin/rm -f /tmp/sock/sagent /tmp/sock/sagent.localroot /tmp/sock/sagent.api /var/run/openvpnas.pid
+  /usr/local/openvpn_as/scripts/openvpnas --logfile=/var/log/openvpnas.log --pidfile=/var/run/openvpnas.pid
   echo "Setting Admin default username and password: admin/openvpn"
   sleep 2
   /usr/local/openvpn_as/scripts/sacli -u admin -k prop_superuser -v true UserPropPut
   /usr/local/openvpn_as/scripts/sacli -u admin --new_pass openvpn SetLocalPassword
   /usr/local/openvpn_as/scripts/sacli -u openvpn UserPropDelAll
-  /etc/init.d/openvpnas restart
+  pkill python && /bin/rm -f /tmp/sock/sagent /tmp/sock/sagent.localroot /tmp/sock/sagent.api /var/run/openvpnas.pid
+  /usr/local/openvpn_as/scripts/openvpnas --logfile=/var/log/openvpnas.log --pidfile=/var/run/openvpnas.pid
 fi
 EOT
 
@@ -159,13 +144,9 @@ chmod -R +x /etc/my_init.d/
 ##             INTALLATION             ##
 #########################################
 
-# Download pipework
-bash -c "curl https://raw.githubusercontent.com/jpetazzo/pipework/master/pipework > /usr/local/bin/pipework"
-chmod +x /usr/local/bin/pipework
-
 # Install OpenVPN-AS
-curl -O http://swupdate.openvpn.org/as/openvpn-as-2.1.2-Ubuntu14.amd_64.deb
-dpkg -i openvpn-as-2.1.2-Ubuntu14.amd_64.deb 
+curl -O http://swupdate.openvpn.org/as/openvpn-as-2.1.12-Ubuntu16.amd_64.deb
+dpkg -i openvpn-as-2.1.12-Ubuntu16.amd_64.deb
 
 
 
@@ -174,6 +155,5 @@ dpkg -i openvpn-as-2.1.2-Ubuntu14.amd_64.deb
 #########################################
 
 # Clean APT install files
-apt-get clean -y
-rm -rf /var/lib/apt/lists/* /var/cache/* /var/tmp/*
-rm openvpn-as-2.1.2-Ubuntu14.amd_64.deb 
+rm openvpn-as-2.1.12-Ubuntu16.amd_64.deb
+

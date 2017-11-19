@@ -8,7 +8,9 @@ OpenVPN - https://openvpn.net/index.php/access-server/overview.html
 
 
 
-Running on the latest Phusion release (ubuntu 14.04), with OpenVPN AS 2.1.2.
+Running on the latest Phusion release (ubuntu 16.04), with OpenVPN AS 2.1.2.
+
+Username and Password "admin / openvpn"
 
 **Pull image**
 
@@ -31,20 +33,14 @@ If you need to change the lisetning interface add(default is eth0):
 
 ```
 http://<host ip>:943/admin
+Username and Password "admin / openvpn" (This can be changed in the webui)
 ```
-
-Username for the webui is "admin" and the password is "openvpn".
 
 
 **Example**
 
 ```
 docker run -d --net="host"  --privileged --name=openvpnas -v /mylocal/directory/fordata:/config -v /etc/localtime:/etc/localtime:ro -e INTERFACE=br0 mace/openvpn-as
-```
-
-For use with "pipework" --  https://hub.docker.com/r/dreamcat4/pipework/
-```
-docker run -d --privileged --net=none --name=openvpnas -v /mylocal/directory/fordata:/config -v /etc/localtime:/etc/localtime:ro -e  PIPEWORK=yes -e 'pipework_cmd=br0 @openvpnas@ 192.168.1.10/24@192.168.1.1' mace/openvpn-as
 ```
 
 
@@ -57,8 +53,6 @@ docker run -d --privileged --net=none --name=openvpnas -v /mylocal/directory/for
 1194/udp 9443/tcp  (943/tcp for webui if needed)
 ```
 * Check the manual from the link on the top for how to setup the server.
-* If "PIPEWORK" varable is set to "yes" dont use INTERFACE variable.
-* When "PIPEWORK" varable is set dont forget to don´t use any network.
 
 
 **Change notes**
@@ -90,44 +84,48 @@ Add variable for pipework, "PIPEWORK".
 * 2015.08.11
 
 Update Phusion base-image. 
+* 2015.08.15
 
-[font size=4]2015.08.15[/font]
-    - Admin username changed, "admin" and password "openvpn".
-    - Default tcp port changed from 443 to 9443.
-    - All username/passvord variables removed, now uses internal database.
-    - "INTERFACE" variable added, fixes bond0 issues.
-    - openvpn is now running as nobody:users.
+Admin username changed, "admin" and password "openvpn".
+Default tcp port changed from 443 to 9443.
+All username/passvord variables removed, now uses internal database.
+"INTERFACE" variable added, fixes bond0 issues.
+openvpn is now running as nobody:users.
+* 2015.10.7
 
-    [font size=4]2015.10.7[/font]
-    - Fix error that /mnt/user/(appdata) couldent be used.
+Fix error that /mnt/user/(appdata) couldent be used.
+* 2015.10.17
 
-    [font size=4]2015.10.17[/font]
-    - Update to openvpn-as openvpn-as-2.0.21
+Update to openvpn-as-2-0-21 
+* 2015.11.12
 
-    [font size=4]2015.11.12[/font]
-    - Added support for pipework (defaults to eth1 and port 443 instead of 9443)
+Added support for pipework (defaults to eth1 and port 443 instead of 9443)
+* 2015.12.16
 
-    [font size=4]2015.12.16[/font]
-    - Upgrade Phusion base-image.
+Upgrade Phusion base-image.
+* 2015.12.19
 
-    [font size=4]2015.12.19[/font]
-    - Revert to previous Phusion base-image.(New image is bugged)
+Revert to previous Phusion base-image.(New image is bugged)
+* 2015.12.24
 
-    [font size=4]2015.12.24[/font]
-    - Phusion base-image.(Upgrade sys-log)
-    - Add apt-get upgrade for security updates should have been enabled along time ago
+Phusion base-image.(Upgrade sys-log)
+Add apt-get upgrade for security updates should have been enabled along time ago
+* 2016.01.06
 
-    [font size=4]2016.01.06[/font]
-    - Upgrade to Openvpn-as-2.0.24 
+Upgrade to Openvpn-as-2.0.24
+* 2016.03.24
 
-    [font size=4]2016.03.24[/font]
-    - Upgrade to Openvpn-as-2.0.25
+Upgrade to Openvpn-as-2.0.25
+* 2016.05.22
 
-    [font size=4]2016.05.22[/font]
-    - Upgrade to Openvpn-as-2.1.0
+Upgrade to Openvpn-as-2.1.0
+* 2016.06.27
 
-    [font size=4]2016.06.27[/font]
-    - Upgrade to Openvpn-as-2.1.1
+Upgrade to Openvpn-as-2.1.1
+* 2016.07.8
 
-    [font size=4]2016.07.8[/font]
-    - Upgrade to Openvpn-as-2.1.2
+Upgrade to Openvpn-as-2.1.2
+* 2017.11.19
+
+Move to phusion 0.9.22 (Ubuntu 16.04)
+Removed pipework support now that docker supports macvlan
